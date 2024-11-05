@@ -5,3 +5,6 @@ zmena pomoci branche
 
 
 toto bude jen na branchi
+.
+
+a je3t2 jsem to tu upravil na cloudu
