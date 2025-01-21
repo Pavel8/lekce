@@ -1,18 +1,40 @@
-from abc import ABC, abstractmethod
+import threading
+import time
 
-class View(ABC):
-    def __init__(self, name: str, position: tuple):
-        self.name = name
-        self.position = position
+# Globální proměnná sdílená mezi vlákny
+balance = 1000
 
-    @abstractmethod
-    def move(self, new_position: tuple):
 
-class Zobrazitelny:
+# Vytvoření Threading Lock
+lock = threading.Lock()
 
-    @abstractmethod
-    def show(self):
-        print("Informace")
+# Funkce reprezentující transakci
+def make_transaction(amount):
+    global balance
+    current_balance = balance
 
-class Button(View, Zobrazitelny):
+    lock.acquire()
 
+    try:
+        # Kritická sekce, kde se mění sdílená proměnná
+        balance = current_balance - amount
+        # shared_variable = shared_variable + 1
+    finally:
+        # Uvolnění zámku
+
+        lock.release()
+
+# Vytvoření dvou vláken pro provedení transakcí
+thread1 = threading.Thread(target=make_transaction, args=(200,))
+thread2 = threading.Thread(target=make_transaction, args=(300,))
+
+
+thread1.start()
+thread2.start()
+
+
+thread1.join()
+thread2.join()
+
+# Očekávaný výsledek je 500, ale může být odlišný kvůli race condition
+print("Zůstatek na účtu po transakcích:", balance)
