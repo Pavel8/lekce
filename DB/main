@@ -5,24 +5,62 @@ conn = sqlite3.connect("chat_app.db")
 cur = conn.cursor()
 
 cur.execute("""
-CREATE TABLE IF NOT EXISTS Instructors (
-    instructor_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(100) NOT NULL,
-    specialization VARCHAR(100)
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL
 );
 """)
 
 cur.execute("""
-INSERT INTO Instructors (name, specialization)
-VALUES ('Adam', 'trener');
+CREATE TABLE IF NOT EXISTS rooms (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);
 """)
 
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    message TEXT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES rooms(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+""")
 conn.commit()
 
 cur.execute("""
-SELECT * FROM Instructors;
+INSERT INTO users (username, password) VALUES
+    ('user1', 'password1'),
+    ('user2', 'password2'),
+    ('user3', 'password3');
 """)
 
+cur.execute("""
+INSERT INTO rooms (name) VALUES
+('room1'),
+('room2'),
+('room3');
+""")
+
+cur.execute("""
+INSERT INTO messages (room_id, user_id, message) VALUES
+(1, 1, 'Ahoj, ako sa máte?'),
+(1, 1, 'Dobre ráno všetkým!'),
+(1, 2, 'Dobré popoludnie!'),
+(2, 3, 'Ahojte, čo sa deje?');
+""")
+
+
+conn.commit()
+
+
+
+conn.commit()
 data = cur.fetchall()
 print(data)
 print("DONE")
