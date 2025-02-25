@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Seznam uzivatelu</h2>
+<ol>
+    {% for user in users %}
+        <li><a href="profile/{{ user['id']}}">{{ user["name"] }}</a></li>
+    {% endfor %}
+</ol>
+{% endblock %}
